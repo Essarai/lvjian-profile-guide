@@ -7,7 +7,7 @@ const a=()=>state.answers;
 const stages=['还没有开始','已经在做，咨询不精准','已有咨询，希望增加委托'];
 const labels=['你的起点','执业与业务','想服务的人','值得信任的理由','你的目标'];
 let bank=window.QUESTION_BANK||[];
-function save(){try{localStorage.setItem(state.demo?KEY+'-demo':KEY,JSON.stringify(state));document.querySelector('#save').textContent='已保存在此浏览器';}catch{document.querySelector('#save').textContent='未能保存，请导出备份';}}
+function save(){try{const savedAt=new Date().toISOString();localStorage.setItem(state.demo?KEY+'-demo':KEY,JSON.stringify({...state,savedAt}));state.savedAt=savedAt;const status=document.querySelector('#save');status.textContent='草稿已保存 '+new Date(savedAt).toLocaleTimeString('zh-CN',{hour12:false});status.title='每30秒自动保存到此浏览器，填写时也会即时保存';}catch{document.querySelector('#save').textContent='未能保存，请导出备份';}}
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';setTimeout(()=>el.style.display='none',2800);}
 function field(id,label,placeholder='',type='text',optional=false){return `<div class="field"><label for="${id}">${label}${optional?'<span class="optional">选填，可稍后补充</span>':''}</label>${type==='textarea'?`<textarea id="${id}" data-key="${id}" placeholder="${esc(placeholder)}">${esc(a()[id])}</textarea>`:`<input id="${id}" data-key="${id}" type="${type}" ${type==='number'?'min="0" max="80" step="1"':''} value="${esc(a()[id])}" placeholder="${esc(placeholder)}">`}</div>`;}
 function chips(id,items,max=1){return `<div class="choices">${items.map(t=>`<button type="button" class="choice ${(Array.isArray(a()[id])?a()[id].includes(t):a()[id]===t)?'selected':''}" data-choice="${id}" data-value="${esc(t)}" data-max="${max}" aria-pressed="${Array.isArray(a()[id])?a()[id].includes(t):a()[id]===t}">${esc(t)}</button>`).join('')}</div>`;}
@@ -33,3 +33,7 @@ document.querySelector('#home').onclick=e=>{e.preventDefault();go('intro')};docu
 
 function leaveDemo(){let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY));}catch{}state=saved||{view:'intro',step:0,max:0,answers:{},extra:{},draft:null,confirmed:false};render();window.scrollTo(0,0);toast('已返回你的填写内容。');}
 document.querySelector('#demo').onclick=()=>{if(!state.demo)save();state=structuredClone(window.LVJIAN_DEMO);save();render();window.scrollTo(0,0);toast('已载入虚构示例，你的原有填写保持不变。');};
+// Periodic checkpoint uses the current state and its own personal/demo storage key.
+setInterval(save,30_000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save();});
+window.addEventListener('pagehide',save);
