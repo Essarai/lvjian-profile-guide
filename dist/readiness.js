@@ -5,11 +5,11 @@ function readinessDimensions(){
  const any=(...v)=>v.some(present);
  return [
  {name:'执业基础',group:1,items:[['执业城市已填写',any(x.city,e.N003)],['执业身份与年限已填写',present(e.N007)&&any(x.years,e.N004)],['本人已核对执业信息与实际情况一致',!!checks.foundation,'foundation']]},
- {name:'专业信任',group:3,items:[['已记录一段经历或代表事项',any(x.story,e.N027,e.N015)],['已记录支撑材料或关键行动',any(e.N026,e.N033)],['本人已核验依据，并确认素材使用权限',!!checks.evidence,'evidence']]},
- {name:'业务聚焦',group:6,items:[['已填写优先业务',any(x.priority,e.N036)],['已填写承接边界与月度承接能力',any(x.excluded,e.N037)&&present(e.N042)],['本人已确认业务方向与交付能力匹配',!!checks.focus,'focus']]},
+ {name:'专业信任',group:3,items:[['已记录一段经历或代表事项',any(x.story,e.N027,e.N015)],['已记录支撑证据或专业优势',any(e.N026,e.N025)],['本人已核验依据，并确认素材使用权限',!!checks.evidence,'evidence']]},
+ {name:'业务聚焦',group:6,items:[['已填写优先业务',any(x.priority,e.N036)],['已填写业务边界与收费参考',any(x.excluded,e.N037)&&present(e.N041)],['本人已确认业务方向与实际服务能力匹配',!!checks.focus,'focus']]},
  {name:'客户洞察',group:6,items:[['已描述目标客户',any(x.client,e.N043)],['已记录客户原话、触发事件与顾虑',any(x.question,e.N045)&&present(e.N044)&&present(e.N046)],['本人已通过真实客户沟通核对这些描述',!!checks.customer,'customer']]},
- {name:'获客经营',group:6,items:[['已记录服务名称与收费',present(e.N047)&&present(e.N049)],['已记录咨询、付费基线与获客目标',present(e.N051)&&present(e.N053)&&any(x.goal,e.N068)],['本人已核对统计口径及目标的可执行性',!!checks.business,'business']]},
- {name:'内容表达',group:8,items:[['已选择表达风格与内容形式',present(e.N063)&&present(e.N064)],['已记录表达样本、内容边界与投入时间',present(e.N065)&&present(e.N066)&&any(x.time,e.N067)],['本人已确认表达适合自己，且能持续投入',!!checks.expression,'expression']]}
+ {name:'获客经营',group:6,items:[['已记录服务名称与收费',present(e.N047)&&present(e.N049)],['已记录咨询、付费基线与数据准确程度',present(e.N051)&&present(e.N053)&&present(e.N054)],['本人已核对统计口径与数据来源',!!checks.business,'business']]},
+ {name:'内容表达',group:8,items:[['已选择表达风格与内容形式',present(e.N063)&&present(e.N064)],['已记录表达样本与内容边界',present(e.N065)&&present(e.N066)],['本人已确认表达适合自己，且能持续投入',!!checks.expression,'expression']]}
  ].map(d=>({...d,score:Math.round(d.items.filter(i=>i[1]).length/3*100)}));
 }
 function renderReadiness(){
